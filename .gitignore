@@ -1,0 +1,31 @@
+# Python 虚拟环境（你这个 .venv 文件夹一定不要传！）
+.venv/
+venv/
+ENV/
+
+# PyCharm 配置文件
+.idea/
+
+# 系统缓存文件
+.DS_Store
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 日志、数据、模型（你不想传的都可以加）
+logs/
+*.log
+*.h5
+*.ckpt
+*.pth
+
+cem/
+
+checkpoints/
+
+data/
+
+README.md
+
+

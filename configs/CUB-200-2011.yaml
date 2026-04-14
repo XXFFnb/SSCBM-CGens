@@ -1,0 +1,75 @@
+# 数据集配置
+dataset_config:
+  dataset: "CUB-200-2011"  # 数据集名称
+  num_workers: 4  # 数据加载时使用的工作线程数
+  batch_size: 64  # 训练时的批量大小
+
+  # 数据集变量
+  root_dir: ./data/CUB_200_2011  # 数据集根目录
+  sampling_percent: 1  # 使用的训练数据百分比
+  test_subsampling: 1  # 测试时使用的子采样率
+  weight_loss: True  # 是否在损失计算中使用类别权重
+
+# 干预配置
+intervention_config:
+  competence_levels: [ 1, 0 ]  # 能力水平，用于模拟不同水平的专家干预
+  intervention_freq: 1  # 干预频率
+  intervention_batch_size: 1024  # 干预时的批量大小
+  intervention_policies:
+    - policy: "random"  # 干预策略：随机
+      group_level: True  # 是否在组级别上进行干预
+      use_prior: True  # 随机策略是否使用学习到的 IntCEM 先验
+
+# 表示层度量
+# 如果希望在评估中包含表示层度量，请将其更改为 False
+# (这可能会显著增加实验时间)
+skip_repr_evaluation: False  # 是否跳过表示层评估
+run_repr_avg_pred: True  # 是否运行表示层平均预测
+run_cas: False  # 是否运行 CAS (Concept Activation Similarity)
+run_nis: False  # 是否运行 NIS (Neighborhood Invariance Score)
+run_ois: False  # 是否运行 OIS (Orthogonality Invariance Score)
+
+# 训练参数
+max_epochs: 5  # 最大训练轮数
+top_k_accuracy: null  # 计算 top-k 准确率，null 表示不计算
+save_model: True  # 是否保存训练好的模型
+patience: 15  # 早停的耐心值，即在多少轮验证集性能没有提升后停止训练
+emb_size: 32  # 嵌入层大小
+extra_dims: 0  # 额外的维度
+concept_loss_weight_labeled: 1  # 有标签概念的损失权重 (1 效果最好)
+concept_loss_weight_unlabeled: 0.1  # 无标签概念的损失权重 (0.1 效果最好)
+learning_rate: 0.01  # 学习率
+weight_decay: 0.000005  # 权重衰减
+weight_loss: True  # 是否在损失计算中使用类别权重
+c_extractor_arch: resnet34  # 概念提取器架构
+optimizer: sgd  # 优化器
+bool: False  # 一个布尔值参数 (具体用途需查看代码)
+early_stopping_monitor: val_loss  # 早停监控的指标
+early_stopping_mode: min  # 早停模式 (最小化监控指标)
+early_stopping_delta: 0.0  # 早停的最小变化量
+momentum: 0.9  # 动量 (用于 SGD 优化器)
+sigmoidal_prob: False  # 是否使用 sigmoidal 概率
+training_intervention_prob: 0.25  # 训练期间的干预概率
+
+# 运行配置
+runs:
+  - architecture: 'SemiSupervisedConceptEmbeddingModel'  # 模型架构：半监督概念嵌入模型
+    run_name: "SSCBM"  # 运行名称
+    sigmoidal_prob: True  # 是否使用 sigmoidal 概率
+    training_intervention_prob: 0.25  # 训练期间的干预概率
+    embedding_activation: "leakyrelu"  # 嵌入层激活函数
+
+  - architecture: 'ConceptEmbeddingModel'  # 模型架构：概念嵌入模型
+    run_name: "CEM"  # 运行名称
+    sigmoidal_prob: True  # 是否使用 sigmoidal 概率
+    training_intervention_prob: 0.25  # 训练期间的干预概率
+    embedding_activation: "leakyrelu"  # 嵌入层激活函数
+
+  - architecture: 'ConceptBottleneckModel'  # 模型架构：概念瓶颈模型
+    run_name: "CBM"  # 运行名称
+    bool: False  # 一个布尔值参数
+    extra_dims: 0  # 额外的维度
+    sigmoidal_extra_capacity: False  # sigmoidal 额外容量
+    sigmoidal_prob: True  # 是否使用 sigmoidal 概率
+    training_intervention_prob: 0.25  # 训练期间的干预概率
+    embedding_activation: "leakyrelu"  # 嵌入层激活函数
