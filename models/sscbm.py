@@ -181,6 +181,59 @@ class SSCBM(CBM_SSL):
         intervention_idxs = intervention_idxs.to(prob.device)
         return prob * (1 - intervention_idxs) + intervention_idxs * c_true, intervention_idxs
 
+    def compute_concept_embedding(self, pos_embeddings, neg_embeddings, concept_probs):
+        """
+        统一的概念 embedding 组合函数。
+
+        原始图像路径和合成特征路径都必须调用这个函数，避免两条路径各自实现不同逻辑。
+        对每个概念，SSCBM 的定义是：
+
+            e_k = e_k^+ * p_k + e_k^- * (1 - p_k)
+
+        Args:
+            pos_embeddings: [batch, n_concepts, emb_size]，正概念 embedding。
+            neg_embeddings: [batch, n_concepts, emb_size]，负概念 embedding。
+            concept_probs: [batch, n_concepts]，概念概率。
+
+        Returns:
+            c_embedding: [batch, n_concepts, emb_size]，组合后的概念 embedding。
+        """
+        return (
+            pos_embeddings * torch.unsqueeze(concept_probs, dim=-1) +
+            neg_embeddings * (1 - torch.unsqueeze(concept_probs, dim=-1))
+        )
+
+    def predict_task_from_concept_embedding(self, c_embedding):
+        """
+        统一的 concept-to-label 预测头。
+
+        原始 _forward 和 predict_from_features 都通过同一个 c2y_model 得到任务 logits，
+        从而保证真实图像和合成特征共享完全一致的概念到类别预测流程。
+        """
+        c_pred = c_embedding.view((-1, self.emb_size * self.n_concepts))
+        return c_pred, self.c2y_model(c_pred)
+
+    def predict_concepts_from_feature_embedding(self, image_feature, c_embedding):
+        """
+        根据空间特征图和概念 embedding 计算概念概率。
+
+        Args:
+            image_feature: [batch, H, W, emb_size]，SSCBM 空间特征图。
+            c_embedding: [batch, n_concepts, emb_size]，组合后的概念 embedding。
+
+        Returns:
+            c_pred_unlabeled: [batch, n_concepts]，由 heatmap 池化得到的概念概率。
+        """
+        heatmap = []
+        for i in range(len(image_feature)):
+            heatmap.append(torch.matmul(image_feature[i], c_embedding[i].transpose(0, 1)))
+        heatmap = torch.stack(heatmap).permute(0, 3, 1, 2)
+
+        c_pred_unlabeled = self.pooling(heatmap).squeeze()
+        if c_pred_unlabeled.dim() == 1:
+            c_pred_unlabeled = c_pred_unlabeled.unsqueeze(0)
+        return self.sigmoid(c_pred_unlabeled)
+
     def _forward(
             self,
             x,
@@ -194,7 +247,8 @@ class SSCBM(CBM_SSL):
             prev_interventions=None,
             output_embeddings=False,
             output_latent=None,
-            output_interventions=None
+            output_interventions=None,
+            output_feature_map=False,
     ):
         if latent is None:
             pre_c = self.pre_concept_model(x)  # [batch_size, 299, 299] -> [batch_size, resnet_out_features]
@@ -243,41 +297,35 @@ class SSCBM(CBM_SSL):
             competencies=competencies,
         )
 
-        c_embedding = (
-                contexts[:, :, :self.emb_size] * torch.unsqueeze(probs, dim=-1) +
-                contexts[:, :, self.emb_size:] * (1 - torch.unsqueeze(probs, dim=-1))
+        # 使用统一函数组合正/负概念 embedding。
+        # 这样真实图像路径和合成特征路径共享同一个 concept embedding 定义。
+        c_embedding = self.compute_concept_embedding(
+            contexts[:, :, :self.emb_size],
+            contexts[:, :, self.emb_size:],
+            probs,
         )  # [batch_size, n_concepts, D]
-        c_pred = c_embedding.view((-1, self.emb_size * self.n_concepts))
-        y = self.c2y_model(c_pred)
+        c_pred, y = self.predict_task_from_concept_embedding(c_embedding)
 
         # image_feature = self.pre_concept_model(x)  # [batch_size, resnet_out_features]
         # c_pred_unlabeled = self.cross_attn(image_feature, c_embedding)
 
         image_feature = self.unlabeled_image_encoder(x)
 
-        # image_feature: [batch_size, H, W, D] (D is concept embedding size)
-        # c_embedding: [batch_size, n_concepts, D]
-        # heatmap: [batch_size, n_concepts, H, W]
-        heatmap = []
-        for i in range(len(image_feature)):
-            heatmap.append(torch.matmul(image_feature[i], c_embedding[i].transpose(0, 1)))
-        heatmap = torch.stack(heatmap).permute(0, 3, 1, 2)
-        c_pred_unlabeled = self.pooling(heatmap).squeeze()
-        c_pred_unlabeled = self.sigmoid(c_pred_unlabeled)
+        # 使用统一函数从空间特征图计算概念概率，避免 _forward 与 predict_from_features 分叉。
+        c_pred_unlabeled = self.predict_concepts_from_feature_embedding(image_feature, c_embedding)
 
         tail_results = []
         if output_interventions:
-            print(f"output_intervention")
             if intervention_idxs is not None and isinstance(intervention_idxs, np.ndarray):
                 intervention_idxs = torch.FloatTensor(intervention_idxs).to(x.device)
             tail_results.append(intervention_idxs)
         if output_latent:
-            print(f"output_latent")
             tail_results.append(latent)
         if output_embeddings:
-            print(f"output_embedding")
             tail_results.append(contexts[:, :, :self.emb_size])
             tail_results.append(contexts[:, :, self.emb_size:])
+        if output_feature_map:
+            tail_results.append(image_feature)
 
         return tuple([c_sem, c_pred, c_pred_unlabeled, y] + tail_results)
 
@@ -388,6 +436,56 @@ class SSCBM(CBM_SSL):
             output_interventions=True
         )
 
+    def predict_from_features(self, image_feature, pos_embeddings, neg_embeddings, concept_probs, task_concept_probs=None):
+        """
+        根据合成空间特征和概念上下文，复用 SSCBM 原始预测头。
+
+        为了解决“合成特征路径与原始 _forward 逻辑不一致”的问题，这里不再使用
+        c_embedding * c_pred_unlabeled 这类近似逻辑，而是严格复用原始 SSCBM 定义：
+
+            c_embedding = pos * prob + neg * (1 - prob)
+            y = c2y(flatten(c_embedding))
+
+        因此真实图像路径和合成特征路径共享同一个 concept-to-label prediction pipeline。
+
+        重要说明：
+            concept_probs 用于先构造一个基础 concept embedding，再从 image_feature
+            预测合成特征自己的概念概率 c_pred_unlabeled。
+
+            旧实现直接用 concept_probs 计算任务 logits。这样任务预测几乎不看
+            image_feature，step2 中传入基座 c_sem_b 时，合成样本的目标类概率会严重偏向
+            基座语义。现在允许传入 task_concept_probs；如果不传，则仍保持旧行为。
+            D-CGFS 新合成路径会把合成特征预测出的概念概率和基座概率混合后传入
+            task_concept_probs，使任务 logits 真正受到合成特征语义影响。
+
+        Args:
+            image_feature: Tensor of shape [batch_size, H, W, D]，合成后的空间特征图。
+            pos_embeddings: Tensor of shape [batch_size, n_concepts, D]，正概念 embedding。
+            neg_embeddings: Tensor of shape [batch_size, n_concepts, D]，负概念 embedding。
+            concept_probs: Tensor of shape [batch_size, n_concepts]，用于组合正负 embedding 的概念概率。
+            task_concept_probs: 可选，用于任务分类头的概念概率。
+
+        Returns:
+            c_pred_unlabeled: 概念层预测概率, shape [batch_size, n_concepts]
+            y: 最终任务类别预测 logits, shape [batch_size, n_tasks]
+        """
+        c_embedding = self.compute_concept_embedding(
+            pos_embeddings,
+            neg_embeddings,
+            concept_probs,
+        )
+        c_pred_unlabeled = self.predict_concepts_from_feature_embedding(image_feature, c_embedding)
+        if task_concept_probs is None:
+            task_embedding = c_embedding
+        else:
+            task_embedding = self.compute_concept_embedding(
+                pos_embeddings,
+                neg_embeddings,
+                task_concept_probs,
+            )
+        _, y = self.predict_task_from_concept_embedding(task_embedding)
+        return c_pred_unlabeled, y
+
     def plot_heatmap(
             self,
             x,
@@ -415,9 +513,11 @@ class SSCBM(CBM_SSL):
         contexts = torch.cat(contexts, dim=1)
 
         probs = c_sem
-        c_embedding = (
-                contexts[:, :, :self.emb_size] * torch.unsqueeze(probs, dim=-1) +
-                contexts[:, :, self.emb_size:] * (1 - torch.unsqueeze(probs, dim=-1))
+        # heatmap 可视化也复用统一的概念 embedding 组合逻辑，避免与 _forward 分叉。
+        c_embedding = self.compute_concept_embedding(
+            contexts[:, :, :self.emb_size],
+            contexts[:, :, self.emb_size:],
+            probs,
         )
         image_feature = self.unlabeled_image_encoder(x)
 

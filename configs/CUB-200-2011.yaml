@@ -23,14 +23,14 @@ intervention_config:
 # 表示层度量
 # 如果希望在评估中包含表示层度量，请将其更改为 False
 # (这可能会显著增加实验时间)
-skip_repr_evaluation: False  # 是否跳过表示层评估
+skip_repr_evaluation: True  # 是否跳过表示层评估
 run_repr_avg_pred: True  # 是否运行表示层平均预测
 run_cas: False  # 是否运行 CAS (Concept Activation Similarity)
 run_nis: False  # 是否运行 NIS (Neighborhood Invariance Score)
 run_ois: False  # 是否运行 OIS (Orthogonality Invariance Score)
 
 # 训练参数
-max_epochs: 5  # 最大训练轮数
+max_epochs: 100  # 最大训练轮数
 top_k_accuracy: null  # 计算 top-k 准确率，null 表示不计算
 save_model: True  # 是否保存训练好的模型
 patience: 15  # 早停的耐心值，即在多少轮验证集性能没有提升后停止训练
@@ -55,21 +55,6 @@ training_intervention_prob: 0.25  # 训练期间的干预概率
 runs:
   - architecture: 'SemiSupervisedConceptEmbeddingModel'  # 模型架构：半监督概念嵌入模型
     run_name: "SSCBM"  # 运行名称
-    sigmoidal_prob: True  # 是否使用 sigmoidal 概率
-    training_intervention_prob: 0.25  # 训练期间的干预概率
-    embedding_activation: "leakyrelu"  # 嵌入层激活函数
-
-  - architecture: 'ConceptEmbeddingModel'  # 模型架构：概念嵌入模型
-    run_name: "CEM"  # 运行名称
-    sigmoidal_prob: True  # 是否使用 sigmoidal 概率
-    training_intervention_prob: 0.25  # 训练期间的干预概率
-    embedding_activation: "leakyrelu"  # 嵌入层激活函数
-
-  - architecture: 'ConceptBottleneckModel'  # 模型架构：概念瓶颈模型
-    run_name: "CBM"  # 运行名称
-    bool: False  # 一个布尔值参数
-    extra_dims: 0  # 额外的维度
-    sigmoidal_extra_capacity: False  # sigmoidal 额外容量
     sigmoidal_prob: True  # 是否使用 sigmoidal 概率
     training_intervention_prob: 0.25  # 训练期间的干预概率
     embedding_activation: "leakyrelu"  # 嵌入层激活函数

@@ -8,17 +8,18 @@ model_selection_metrics: [ val_acc_y ]
 # Dataset Configuration
 dataset_config:
   dataset: "AwA2"
-  image_size: 64
-  num_classes: 1000
+  image_size: 299
+  num_classes: 50
   batch_size: 32
-  root_dir: W:\Semi-supervised Concept Bottleneck Models\Datasets\AwA2
+  root_dir: data/AwA2/Animals_with_Attributes2
   use_imbalance: True
   use_binary_vector_class: True
-  num_concepts: 6
+  num_concepts: 85
   label_binary_width: 1
   label_dataset_subsample: 1
   num_hidden_concepts: 2
   selected_concepts: False
+  use_resnet_neighbors: False
   num_workers: 8
 
 # Intervention Parameters
@@ -77,21 +78,6 @@ training_intervention_prob: 0.25
 runs:
   - architecture: 'SemiSupervisedConceptEmbeddingModel'
     run_name: "SSCBM"
-    sigmoidal_prob: True
-    training_intervention_prob: 0.25
-    embedding_activation: "leakyrelu"
-
-  - architecture: 'ConceptEmbeddingModel'
-    run_name: "CEM"
-    sigmoidal_prob: True
-    training_intervention_prob: 0.25
-    embedding_activation: "leakyrelu"
-
-  - architecture: 'ConceptBottleneckModel'
-    run_name: "CBM"
-    bool: False
-    extra_dims: 0
-    sigmoidal_extra_capacity: False
     sigmoidal_prob: True
     training_intervention_prob: 0.25
     embedding_activation: "leakyrelu"

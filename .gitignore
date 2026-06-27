@@ -1,31 +1,67 @@
-# Python 虚拟环境（你这个 .venv 文件夹一定不要传！）
+# Python environments
 .venv/
 venv/
 ENV/
 
-# PyCharm 配置文件
+# IDE and OS files
 .idea/
-
-# 系统缓存文件
+.vscode/
 .DS_Store
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
 
-# 日志、数据、模型（你不想传的都可以加）
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Logs
 logs/
+run_logs/*
+!run_logs/README.md
 *.log
-*.h5
+
+# Local datasets and generated auxiliary data
+data/*
+data/**/*
+!data/*/
+!data/README.md
+!data/**/README.md
+
+# Model checkpoints and large model artifacts
+checkpoints/*
+!checkpoints/README.md
 *.ckpt
 *.pth
+*.h5
 
+# Generated synthetic features and images
+generated_data/*
+!generated_data/README.md
+
+# Raw evaluation outputs. Paper-ready summaries live in paper_tables/.
+final_evaluation_results/*
+!final_evaluation_results/README.md
+explainability_results/*
+!explainability_results/README.md
+diagnostic_results/*
+diagnostic_results/**/*
+!diagnostic_results/*/
+!diagnostic_results/README.md
+!diagnostic_results/**/README.md
+
+# Auto-generated experiment command protocol
+problem6_experiment_protocol/*
+!problem6_experiment_protocol/README.md
+
+# Optional local archives
+archive/
+
+# Large vendored or external dependency tree
 cem/
 
-checkpoints/
-
-data/
-
-README.md
-
-
+# Local papers and word drafts
+baseline/*.pdf
+baseline/*.docx
+*.docx

@@ -1,0 +1,6 @@
+method,overall_a_acc,overall_c_acc,macro_f1,balanced_accuracy,worst_class_acc,selected_target_acc,selected_base_acc,target_to_base_rate,notes
+baseline_sscbm,57.80,89.72,57.23,57.99,0.00,19.29,82.91,48.57,Original SSCBM baseline
+dcgfs_target_score_w015,66.00,89.46,65.96,66.04,10.00,44.29,78.63,19.29,Current main D-CGFS configuration before synthesis-core changes
+dcgfs_aligned_pred_disc_mix,65.79,89.44,65.79,65.83,10.00,40.71,76.92,21.43,Aligned pooled target feature plus hard predicted discriminative concept mix in synthesis and training
+dcgfs_aligned_step2_only,65.72,89.46,65.74,65.78,6.67,42.14,77.78,22.14,Aligned pooled target feature and hard predicted discriminative mix only during synthesis scoring
+dcgfs_old_spatial_pred_disc_mix,66.14,89.43,66.22,66.20,6.67,42.86,77.78,20.71,Old spatial fusion plus hard predicted discriminative concept mix in synthesis and training

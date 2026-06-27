@@ -1,0 +1,8 @@
+method,overall_acc,macro_f1,balanced_acc,worst_class_acc,selected_target_acc,selected_base_acc,target_to_base_rate,overall_concept_acc
+SSCBM baseline,57.8,57.23,57.99,0.0,19.29,82.91,48.57,89.72
+SSCBM finetune,66.76,66.62,66.87,3.33,56.43,71.79,16.43,89.56
+Oversampling,66.48,66.06,66.53,13.33,50.71,64.1,10.71,89.51
+Reweighting,67.31,67.23,67.42,3.33,58.57,70.94,15.71,89.6
+Class-balanced loss,67.31,67.23,67.42,3.33,58.57,70.94,15.71,89.6
+Feature mixup,66.69,66.65,66.87,3.33,57.14,68.38,15.0,88.92
+D-CGFS target_score_w015,65.65,65.65,65.72,10.0,42.86,77.78,20.71,89.49

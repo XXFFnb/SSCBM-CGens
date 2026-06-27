@@ -1,0 +1,4 @@
+method,target_concept_acc,target_discriminative_concept_acc,intervention_acc
+SSCBM,90.54,21.64,77.86
+D-CGFS pair-topk,90.82,31.10,80.71
+D-CGFS pair-topk + base preservation w=0.15,91.18,32.19,79.29

@@ -1,0 +1,4 @@
+method,overall_a_acc,overall_c_acc,macro_f1,balanced_accuracy,worst_class_acc,selected_target_acc,selected_base_acc,target_to_base_rate,notes
+baseline_sscbm,57.80,89.72,57.23,57.99,0.00,19.29,82.91,48.57,Original SSCBM baseline
+dcgfs_target_score_w015,66.00,89.46,65.96,66.04,10.00,44.29,78.63,19.29,Current main D-CGFS configuration
+dcgfs_model_aware_d_w050,65.62,89.49,65.63,65.69,6.67,40.71,76.07,22.14,Fixed target/base pairs but recomputed D with 0.5 label prototype and 0.5 SSCBM predicted concept prototype

@@ -1,0 +1,7 @@
+method,overall_acc,macro_f1,balanced_acc,worst_class_acc,target_acc,base_acc,target_to_base_rate
+SSCBM,57.80,57.23,57.99,0.00,19.29,82.91,48.57
+D-CGFS original main,65.36,65.16,65.45,3.33,37.86,75.21,20.71
+D-CGFS no conf filter,65.62,65.58,65.67,6.67,43.57,66.67,16.43
+D-CGFS pair-topk,65.98,65.97,65.99,6.67,44.29,66.67,12.86
+D-CGFS previous main pair-score w=0.05 + base preservation w=0.15,65.74,65.72,65.80,6.67,44.29,77.78,17.86
+D-CGFS target-score w=0.15 + base preservation w=0.15,66.00,65.96,66.04,10.00,44.29,78.63,19.29

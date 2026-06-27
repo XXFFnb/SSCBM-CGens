@@ -1,0 +1,7 @@
+method,overall_a_acc,overall_c_acc,macro_f1,balanced_accuracy,worst_class_acc,selected_target_acc,selected_base_acc,target_to_base_rate,notes
+baseline_sscbm,57.80,89.72,57.23,57.99,0.00,19.29,82.91,48.57,Original SSCBM baseline
+dcgfs_target_score_w015,66.00,89.46,65.96,66.04,10.00,44.29,78.63,19.29,Current main D-CGFS configuration
+dcgfs_old_spatial_pred_disc_mix_w025,65.90,89.44,65.90,65.95,6.67,42.86,76.07,20.71,Old spatial fusion with soft predicted discriminative concept mix in synthesis and training alpha=0.25
+dcgfs_old_spatial_pred_disc_mix_w050,65.81,89.47,65.79,65.87,6.67,41.43,76.92,22.14,Old spatial fusion with soft predicted discriminative concept mix in synthesis and training alpha=0.50
+dcgfs_aligned_pred_disc_mix_w025,65.77,89.47,65.77,65.82,6.67,42.86,76.92,21.43,Aligned pooled target feature with soft predicted discriminative concept mix alpha=0.25
+dcgfs_old_spatial_step2_soft_w025,65.76,89.44,65.72,65.83,6.67,43.57,76.07,21.43,Soft predicted discriminative mix only during synthesis scoring alpha=0.25

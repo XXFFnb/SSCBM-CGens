@@ -22,8 +22,9 @@ if __name__ == '__main__':
     # 1. Get experiment args and seed
     # ==================================================================================================
     args = get_args()
+    lightning_accelerator = "gpu" if args.device == "cuda" else args.device
     logging_time = time.strftime('%H-%M', time.localtime())
-    save_dir = os.path.join(args.save_path, f"{args.dataset}_{logging_time}")
+    save_dir = args.fixed_save_dir or os.path.join(args.save_path, f"{args.dataset}_{logging_time}")
     logging_config(save_dir)
     logging.info(f"args: {args}")
     logging.info(f"Saving path: {save_dir}")
@@ -79,7 +80,7 @@ if __name__ == '__main__':
             model, model_results = train_end_to_end_model(
                 run_name=run_name,
                 task_class_weights=task_class_weights,
-                accelerator=args.device,
+                accelerator=lightning_accelerator,
                 devices='auto',
                 n_concepts=run_config['n_concepts'],
                 n_tasks=run_config['n_tasks'],
@@ -112,7 +113,7 @@ if __name__ == '__main__':
                     result_dir=save_dir,
                     concept_map=concept_map,
                     intervened_groups=intervened_groups,
-                    accelerator=args.device,
+                    accelerator=lightning_accelerator,
                     devices='auto',
                     split=0,
                     rerun=False,
@@ -178,7 +179,7 @@ if __name__ == '__main__':
                     imbalance=imbalance,
                     result_dir=save_dir,
                     task_class_weights=task_class_weights,
-                    accelerator=args.device,
+                    accelerator=lightning_accelerator,
                     devices='auto',
                     seed=args.seed,
                     old_results=old_results,

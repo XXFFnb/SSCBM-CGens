@@ -1,0 +1,4 @@
+method,overall_c_acc,target_c_acc,target_disc_c_acc,heatmap_entropy,mask_compactness,bbox_energy_ratio,original_acc,intervention_acc,intervention_gain
+SSCBM baseline,89.72,90.54,21.64,93.08,11.43,62.28,19.29,77.86,58.57
+D-CGFS main,89.46,91.18,32.19,94.26,11.50,59.66,44.29,79.29,35.00
+target_score_w015,89.46,91.11,31.78,94.10,11.25,59.79,44.29,82.14,37.86

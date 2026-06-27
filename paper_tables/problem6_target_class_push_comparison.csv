@@ -1,0 +1,6 @@
+method,overall_acc,macro_f1,balanced_acc,worst_class_acc,selected_target_acc,selected_base_acc,target_to_base_rate,overall_concept_acc
+SSCBM baseline,57.80,57.23,57.99,0.00,19.29,82.91,48.57,89.72
+D-CGFS target_score_w015,66.00,65.96,66.04,10.00,44.29,78.63,19.29,89.46
+dcgfs_target_class_w15,66.12,66.13,66.20,10.00,41.43,76.92,21.43,89.47
+dcgfs_target_class_w20,66.09,66.04,66.11,6.67,43.57,76.92,17.86,89.39
+dcgfs_target_class_w25,65.86,65.84,65.92,3.33,43.57,77.78,19.29,89.44

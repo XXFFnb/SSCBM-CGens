@@ -1,11 +1,11 @@
 # Dataset Configuration
 dataset_config:
-  dataset: "PBC"
-  num_workers: 64
-  batch_size: 256
+  dataset: "7pt"
+  num_workers: 8
+  batch_size: 32
 
   # DATASET VARIABLES
-  root_dir: W:\Semi-supervised Concept Bottleneck Models\Datasets\7-point\release_v0
+  root_dir: data/7-point/release_v0
   sampling_percent: 1
   test_subsampling: 1
   weight_loss: True
@@ -39,7 +39,7 @@ intervention_config:
 # Representation metrics
 # Change to False if you want representation metrics to be included in the
 # evaluation (may significantly increase experiment times)
-skip_repr_evaluation: False
+skip_repr_evaluation: True
 run_repr_avg_pred: True
 run_cas: False
 run_nis: True
@@ -69,21 +69,6 @@ training_intervention_prob: 0.25
 runs:
   - architecture: 'SemiSupervisedConceptEmbeddingModel'
     run_name: "SSCBM"
-    sigmoidal_prob: True
-    training_intervention_prob: 0.25
-    embedding_activation: "leakyrelu"
-
-  - architecture: 'ConceptEmbeddingModel'
-    run_name: "CEM"
-    sigmoidal_prob: True
-    training_intervention_prob: 0.25
-    embedding_activation: "leakyrelu"
-
-  - architecture: 'ConceptBottleneckModel'
-    run_name: "CBM"
-    bool: False
-    extra_dims: 0
-    sigmoidal_extra_capacity: False
     sigmoidal_prob: True
     training_intervention_prob: 0.25
     embedding_activation: "leakyrelu"

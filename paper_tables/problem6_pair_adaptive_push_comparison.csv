@@ -1,0 +1,6 @@
+method,synthetic_samples,overall_acc,macro_f1,balanced_acc,worst_class_acc,selected_target_acc,selected_base_acc,target_to_base_rate,overall_concept_acc
+SSCBM baseline,0,57.80,57.23,57.99,0.00,19.29,82.91,48.57,89.72
+D-CGFS target_score_w015,2500,66.00,65.96,66.04,10.00,44.29,78.63,19.29,89.46
+dcgfs_pair_adaptive_target_conf,1816,65.72,65.67,65.78,10.00,43.57,78.63,19.29,89.44
+dcgfs_pair_adaptive_source_diversity,2500,65.72,65.68,65.77,10.00,42.14,78.63,18.57,89.44
+dcgfs_pair_adaptive_conf_diverse20,1816,65.69,65.58,65.74,6.67,42.14,78.63,19.29,89.46

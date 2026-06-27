@@ -1,0 +1,9 @@
+dataset,method,status,overall_acc,macro_f1,balanced_acc,worst_class_acc,selected_target_acc,selected_base_acc,target_to_base_rate,overall_concept_acc
+CUB,SSCBM baseline,done,57.8,57.23,57.99,0.0,19.29,82.91,48.57,89.72
+CUB,D-CGFS target_score_w015,done,65.65,65.65,65.72,10.0,42.86,77.78,20.71,89.49
+AwA2,SSCBM baseline,done,89.39,86.02,85.6,45.45,55.65,81.44,17.74,96.48
+AwA2,D-CGFS target_score_w015,done,90.01,86.59,86.46,29.41,55.65,85.57,19.35,96.15
+PBC,SSCBM baseline,done,99.65,99.5,99.5,97.82,99.65,99.49,0.29,94.14
+PBC,D-CGFS target_score_w015,done,99.65,99.53,99.57,98.37,99.65,99.49,0.23,93.3
+7pt,SSCBM baseline,done,61.27,46.39,47.53,22.0,61.27,61.11,23.54,69.81
+7pt,D-CGFS target_score_w015,done,66.84,51.77,50.68,22.22,66.84,67.2,20.76,71.38

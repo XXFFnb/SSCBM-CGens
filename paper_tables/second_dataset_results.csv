@@ -1,0 +1,3 @@
+dataset,method,status,overall_acc,macro_f1,balanced_acc,worst_class_acc,selected_target_acc,selected_base_acc,target_to_base_rate,overall_concept_acc
+AwA2,AwA2 SSCBM baseline,done,89.39,86.02,85.6,45.45,55.65,81.44,17.74,96.48
+AwA2,AwA2 D-CGFS target_score_w015,done,90.01,86.59,86.46,29.41,55.65,85.57,19.35,96.15

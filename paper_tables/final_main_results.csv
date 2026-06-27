@@ -1,0 +1,6 @@
+method,overall_acc,macro_f1,balanced_acc,worst_class_acc,target_acc,base_acc,target_to_base_rate
+SSCBM,57.8,57.23,57.99,0.0,19.29,82.91,48.57
+D-CGFS original main,65.36,65.16,65.45,3.33,37.86,75.21,20.71
+D-CGFS pair-topk,65.98,65.97,65.99,6.67,44.29,66.67,12.86
+D-CGFS previous main w005 + BP,66.02,65.9,66.03,6.67,42.86,71.79,17.14
+D-CGFS target_score_w015 + BP,65.65,65.65,65.72,10.0,42.86,77.78,20.71

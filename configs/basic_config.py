@@ -61,6 +61,11 @@ def get_args():
         type=str,
         default='./checkpoints/',
         help='Checkpoints saving path')
+    parser.add_argument(
+        '--fixed_save_dir',
+        type=str,
+        default=None,
+        help='Optional exact checkpoint directory. If set, disables timestamped save directory naming.')
 
     parser.add_argument(
         '--activation_freq',
